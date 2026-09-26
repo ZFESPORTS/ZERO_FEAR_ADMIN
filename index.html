@@ -3,314 +3,435 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZERO FEAR • Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>ZERO FEAR — Admin Panel</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
+:root{--bg:#07090d;--panel:#0d1118;--panel2:#111722;--line:#202938;--text:#eef3f8;--muted:#8995a8;--accent:#00e5ff;--accent2:#7c4dff;--danger:#ff4d6d;--ok:#39e58c}
 *{box-sizing:border-box}
-body{margin:0;background:#07080d;color:#f4f7ff;font-family:Rajdhani,Arial,sans-serif}
-.container{width:min(1180px,94%);margin:auto}
-header{padding:24px 0;border-bottom:1px solid #242a3a;background:#0a0c12;position:sticky;top:0;z-index:10}
-.top{display:flex;justify-content:space-between;align-items:center;gap:15px}
-.logo{font:900 22px Orbitron;letter-spacing:2px}.logo span{color:#ff4141}
-h1,h2,h3{font-family:Orbitron}
-main{padding:35px 0}
-.card{background:#0e111a;border:1px solid #252b3b;border-radius:16px;padding:22px;margin-bottom:20px}
-.form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.full{grid-column:1/-1}
-label{display:block;font-weight:700;margin-bottom:7px;color:#cbd3e2}
-input,select{width:100%;padding:12px;background:#090c13;border:1px solid #2c3345;border-radius:9px;color:#fff;font:600 15px Rajdhani}
-.btn{border:0;border-radius:9px;padding:11px 16px;background:#ff3e3e;color:#fff;font:800 14px Orbitron;cursor:pointer}
-.btn.secondary{background:#1a1f2d}.btn.green{background:#16894f}.btn.danger{background:#a82d36}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
-.app{border:1px solid #293146;border-radius:13px;padding:18px;background:#0a0d14}
-.app h3{margin:0 0 12px}.line{margin:5px 0;color:#aeb8cb}.line b{color:#e9edf6}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-.status{margin:10px 0;font-weight:700}.ok{color:#69eda1}.err{color:#ff7272}.muted{color:#8490a6}
+body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(0,229,255,.08),transparent 30%),radial-gradient(circle at 100% 20%,rgba(124,77,255,.08),transparent 30%),var(--bg);color:var(--text);font-family:Rajdhani,Arial,sans-serif;min-height:100vh}
+h1,h2,h3,h4,button,.brand,.stat-number{font-family:Orbitron,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
 .hidden{display:none!important}
-table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #252b3b;text-align:left}th{color:#ff6969}
-@media(max-width:700px){.form{grid-template-columns:1fr}.full{grid-column:auto}.top{align-items:flex-start;flex-direction:column}}
+.container{width:min(1180px,92%);margin:auto}
+header{border-bottom:1px solid var(--line);background:rgba(7,9,13,.88);backdrop-filter:blur(12px);position:sticky;top:0;z-index:20}
+.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:20px;letter-spacing:2px;color:var(--accent);text-shadow:0 0 18px rgba(0,229,255,.4)}
+.userbox{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:14px}
+main{padding:32px 0 70px}
+.page-title{margin-bottom:24px}
+.page-title h1{font-size:28px;margin:0 0 6px}
+.page-title p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.card{background:linear-gradient(145deg,rgba(17,23,34,.96),rgba(10,13,19,.96));border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.18)}
+.stat-number{font-size:28px;color:var(--accent);margin-top:6px}
+.muted{color:var(--muted)}
+.section{margin-top:24px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.section-head h2{margin:0;font-size:18px}
+.btn{border:1px solid var(--line);background:#121925;color:var(--text);padding:11px 15px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:var(--accent);box-shadow:0 0 18px rgba(0,229,255,.12)}
+.btn.primary{background:linear-gradient(90deg,var(--accent2),#00a8ff);border:0}
+.btn.danger{border-color:rgba(255,77,109,.35);color:#ff8ba0}
+.btn.ok{border-color:rgba(57,229,140,.35);color:#70f1ad}
+.btn.small{padding:8px 11px;font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+td{font-size:15px}
+.badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:#151c28;border:1px solid var(--line);font-size:12px}
+input,select,textarea{width:100%;background:#090d14;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,255,.08)}
+label{display:block;color:var(--muted);font-size:13px;margin:0 0 6px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.form-grid.three{grid-template-columns:repeat(3,1fr)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal{width:min(1050px,100%);max-height:92vh;overflow:auto;background:#0b1017;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 30px 100px rgba(0,0,0,.55)}
+.modal h2{margin:0 0 4px}
+.modal-sub{color:var(--muted);margin-bottom:18px}
+.team{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px;background:rgba(17,23,34,.65)}
+.team-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.team-head h3{margin:0;font-size:15px}
+.player-row{display:grid;grid-template-columns:2fr .7fr .7fr 1fr .8fr .65fr auto;gap:8px;align-items:end;margin-bottom:9px}
+.player-row .remove{height:42px}
+.mvp-toggle{height:42px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:#090d14;color:#8995a8}
+.mvp-toggle.active{border-color:#ffd166;color:#ffd166;box-shadow:0 0 14px rgba(255,209,102,.12)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.notice{padding:12px 14px;border-radius:10px;background:#101722;border:1px solid var(--line);color:var(--muted);margin-bottom:14px}
+.error{color:#ff8ba0}
+.success{color:#70f1ad}
+.login{width:min(430px,92%);margin:90px auto}
+.login h1{text-align:center;color:var(--accent);letter-spacing:3px}
+.empty{padding:25px;text-align:center;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.player-row{grid-template-columns:1fr 1fr 1fr}.player-row .wide{grid-column:span 3}.form-grid.three{grid-template-columns:1fr}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.nav{align-items:flex-start;padding:14px 0}.userbox{font-size:12px}.player-row{grid-template-columns:1fr 1fr}.player-row .wide{grid-column:span 2}}
 </style>
 </head>
 <body>
+
+<div id="loginView">
+  <div class="card login">
+    <h1>ZERO FEAR</h1>
+    <p class="muted" style="text-align:center">Admin Control Panel</p>
+    <div style="margin-top:20px">
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="Admin email">
+    </div>
+    <div style="margin-top:14px">
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="Password">
+    </div>
+    <button class="btn primary" style="width:100%;margin-top:16px" onclick="login()">LOGIN</button>
+    <p id="loginMsg" class="error" style="min-height:20px"></p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
 <header>
-  <div class="container top">
-    <div class="logo">ZERO <span>FEAR</span> ADMIN</div>
-    <button id="logoutBtn" class="btn secondary hidden">LOGOUT</button>
+  <div class="container nav">
+    <div class="brand">ZERO FEAR // ADMIN</div>
+    <div class="userbox">
+      <span id="adminEmail"></span>
+      <button class="btn small" onclick="logout()">LOGOUT</button>
+    </div>
   </div>
 </header>
 
 <main class="container">
-  <section id="loginSection" class="card">
-    <h1>Admin Login</h1>
-    <p class="muted">This page is separate from the public ZERO FEAR website.</p>
-    <form id="loginForm" class="form">
-      <div class="full">
-        <label>Email</label>
-        <input id="email" type="email" required autocomplete="username">
+  <div class="page-title">
+    <h1>ADMIN DASHBOARD</h1>
+    <p>Manage members, applications and Guild War performance.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="muted">Members</div><div class="stat-number" id="memberCount">0</div></div>
+    <div class="card"><div class="muted">Applications</div><div class="stat-number" id="appCount">0</div></div>
+    <div class="card"><div class="muted">Matches</div><div class="stat-number" id="matchCount">0</div></div>
+    <div class="card"><div class="muted">Top Kills</div><div class="stat-number" id="topKills">0</div></div>
+  </div>
+
+  <section class="section card">
+    <div class="section-head">
+      <div>
+        <h2>📊 MATCH STATS</h2>
+        <div class="muted">Record a completed Guild War match.</div>
       </div>
-      <div class="full">
-        <label>Password</label>
-        <input id="password" type="password" required autocomplete="current-password">
-      </div>
-      <div class="full"><button class="btn" type="submit">LOGIN</button></div>
-    </form>
-    <div id="loginStatus" class="status"></div>
+      <button class="btn primary" onclick="openMatchModal()">＋ ADD MATCH STATS</button>
+    </div>
   </section>
 
-  <section id="dashboard" class="hidden">
-    <div class="card">
-      <h1>ZERO FEAR CONTROL PANEL</h1>
-      <p class="muted">Review registrations, accept players, and manage the public Members section.</p>
-    </div>
+  <section class="section card">
+    <div class="section-head"><h2>👥 CURRENT MEMBERS</h2><button class="btn small" onclick="loadAll()">REFRESH</button></div>
+    <div id="membersWrap"></div>
+  </section>
 
-    <div class="card">
-      <h2>➕ Add Member</h2>
-      <form id="memberForm" class="form">
-        <input type="hidden" id="editId">
-        <div><label>Username</label><input id="mUsername" required></div>
-        <div><label>UID</label><input id="mUid" required></div>
-        <div><label>Role</label>
-          <select id="mRole"><option>Member</option><option>Elite Member</option><option>Officer</option><option>Co-Leader</option><option>Leader</option></select>
-        </div>
-        <div><label>Playstyle</label>
-          <select id="mPlaystyle"><option>Rusher</option><option>Sniper</option><option>Supporter</option><option>Camper</option><option>IGL</option><option>Flex</option></select>
-        </div>
-        <div class="full"><button class="btn" type="submit">SAVE MEMBER</button> <button type="button" id="cancelEdit" class="btn secondary">CLEAR</button></div>
-      </form>
-      <div id="memberStatus" class="status"></div>
-    </div>
+  <section class="section card">
+    <div class="section-head"><h2>📝 APPLICATIONS</h2></div>
+    <div id="applicationsWrap"></div>
+  </section>
 
-    <div class="card">
-      <h2>📋 Registrations</h2>
-      <p class="muted">Accepting an application adds the applicant to the public Members section automatically.</p>
-      <div id="applications"></div>
-    </div>
-
-    <div class="card">
-      <h2>👥 Current Members</h2>
-      <div id="adminMembers"></div>
-    </div>
+  <section class="section card">
+    <div class="section-head"><h2>⚔️ MATCH HISTORY</h2></div>
+    <div id="matchesWrap"></div>
   </section>
 </main>
+</div>
+
+<div id="matchModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>⚔️ ADD MATCH STATS</h2>
+    <div class="modal-sub">Enter the performance of every ZERO FEAR player who participated.</div>
+
+    <div id="matchMsg" class="notice hidden"></div>
+
+    <div class="form-grid three">
+      <div><label>War Date</label><input id="warDate" type="date"></div>
+      <div><label>Match Number</label><input id="matchNumber" type="number" min="1" value="1"></div>
+      <div><label>Mode</label><select id="matchMode"><option>Battle Royale</option><option>Clash Squad</option><option>Other</option></select></div>
+    </div>
+
+    <div class="form-grid" style="margin-top:14px">
+      <div><label>Winning Team</label><select id="winningTeam"></select></div>
+      <div><label>Notes (optional)</label><input id="matchNotes" placeholder="Optional match note"></div>
+    </div>
+
+    <div id="teams"></div>
+
+    <div style="margin-top:14px">
+      <button class="btn" onclick="addTeam()">＋ ADD TEAM</button>
+    </div>
+
+    <div class="notice" style="margin-top:16px">
+      <b>How it works:</b> select members, enter kills/deaths/damage/placement, mark one MVP, then save. Lifetime statistics are calculated automatically from saved matches.
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeMatchModal()">CANCEL</button>
+      <button class="btn primary" onclick="saveMatch()">💾 SAVE MATCH</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const SUPABASE_URL = "https://qgubdwvghkjqqyidsboq.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_3lmSJ3TY3JBzEwW6gTnnOw_zIsugBXq";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[c]));
+let members = [];
+let applications = [];
+let matches = [];
+let teams = 0;
+
+const $ = id => document.getElementById(id);
+
+async function login(){
+  $("loginMsg").textContent = "";
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+  const {error} = await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){$("loginMsg").textContent = error.message; return;}
+  await startApp();
 }
 
-function setStatus(id, message, ok=false) {
-  const el=document.getElementById(id);
-  el.className="status "+(ok?"ok":"err");
-  el.textContent=message;
-}
-
-async function checkAdmin() {
-  const { data:{session} } = await supabaseClient.auth.getSession();
-  if (!session) return false;
-
-  const { data, error } = await supabaseClient
-    .from("admin_users")
-    .select("user_id")
-    .eq("user_id", session.user.id)
-    .maybeSingle();
-
-  return !error && !!data;
-}
-
-async function showDashboardIfAdmin() {
-  const admin = await checkAdmin();
-  if (!admin) {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("loginSection").classList.remove("hidden");
-    document.getElementById("logoutBtn").classList.add("hidden");
-    return;
-  }
-
-  document.getElementById("loginSection").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-  document.getElementById("logoutBtn").classList.remove("hidden");
-  await Promise.all([loadApplications(), loadMembers()]);
-}
-
-document.getElementById("loginForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  document.getElementById("loginStatus").textContent="Logging in...";
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email: document.getElementById("email").value.trim(),
-    password: document.getElementById("password").value
-  });
-  if (error) {
-    setStatus("loginStatus", error.message);
-    return;
-  }
-  document.getElementById("loginStatus").textContent="";
-  await showDashboardIfAdmin();
-});
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+async function logout(){
   await supabaseClient.auth.signOut();
   location.reload();
-});
-
-async function loadApplications() {
-  const box=document.getElementById("applications");
-  box.innerHTML='<p class="muted">Loading...</p>';
-
-  const { data, error } = await supabaseClient
-    .from("applications")
-    .select("*")
-    .order("created_at", {ascending:false});
-
-  if(error){ box.innerHTML='<p class="err">Could not load applications.</p>'; console.error(error); return; }
-  if(!data.length){ box.innerHTML='<p class="muted">No registrations yet.</p>'; return; }
-
-  box.innerHTML=data.map(a=>`
-    <div class="app">
-      <h3>${escapeHTML(a.username)}</h3>
-      <div class="line"><b>UID:</b> ${escapeHTML(a.uid)}</div>
-      <div class="line"><b>Discord:</b> ${escapeHTML(a.discord_id)}</div>
-      <div class="line"><b>Playstyle:</b> ${escapeHTML(a.playstyle)}</div>
-      <div class="line"><b>Previous guild:</b> ${escapeHTML(a.previous_guild)}</div>
-      <div class="line"><b>Previous role:</b> ${escapeHTML(a.previous_role)}</div>
-      <div class="line"><b>Experience:</b> ${escapeHTML(a.experience)}</div>
-      <div class="line"><b>Preferred role:</b> ${escapeHTML(a.preferred_role)}</div>
-      <div class="line"><b>Mic:</b> ${escapeHTML(a.microphone)}</div>
-      <div class="line"><b>Daily activity:</b> ${escapeHTML(a.daily_activity)}</div>
-      <div class="line"><b>Region:</b> ${escapeHTML(a.region)}</div>
-      <div class="line"><b>Source:</b> ${escapeHTML(a.source)}</div>
-      <div class="line"><b>Why:</b> ${escapeHTML(a.reason)}</div>
-      <div class="line"><b>Extra:</b> ${escapeHTML(a.extra)}</div>
-      <div class="line"><b>Status:</b> ${escapeHTML(a.status)}</div>
-      <div class="actions">
-        ${a.status==="Pending" ? `<button class="btn green" onclick="acceptApplication(${a.id})">ACCEPT + ADD MEMBER</button>
-        <button class="btn danger" onclick="rejectApplication(${a.id})">REJECT</button>` : ""}
-        <button class="btn secondary" onclick="deleteApplication(${a.id})">DELETE</button>
-      </div>
-    </div>
-  `).join("");
 }
 
-async function acceptApplication(id) {
-  const {data:app,error:getError}=await supabaseClient.from("applications").select("*").eq("id",id).single();
-  if(getError){alert(getError.message);return;}
-
-  const {error:memberError}=await supabaseClient.from("members").upsert({
-    username:app.username,
-    uid:app.uid,
-    role:"Member",
-    playstyle:app.playstyle || "Flex"
-  },{onConflict:"uid"});
-
-  if(memberError){alert("Could not add member: "+memberError.message);return;}
-
-  const {error:updateError}=await supabaseClient.from("applications").update({status:"Accepted"}).eq("id",id);
-  if(updateError){alert(updateError.message);return;}
-
-  await Promise.all([loadApplications(),loadMembers()]);
-  alert("Accepted! The player is now in the public Members section.");
-}
-
-async function rejectApplication(id) {
-  if(!confirm("Reject this application?")) return;
-  const {error}=await supabaseClient.from("applications").update({status:"Rejected"}).eq("id",id);
-  if(error){alert(error.message);return;}
-  loadApplications();
-}
-
-async function deleteApplication(id) {
-  if(!confirm("Delete this application permanently?")) return;
-  const {error}=await supabaseClient.from("applications").delete().eq("id",id);
-  if(error){alert(error.message);return;}
-  loadApplications();
-}
-
-async function loadMembers() {
-  const box=document.getElementById("adminMembers");
-  const {data,error}=await supabaseClient.from("members").select("*").order("created_at",{ascending:true});
-  if(error){box.innerHTML='<p class="err">Could not load members.</p>';return;}
-  if(!data.length){box.innerHTML='<p class="muted">No members yet.</p>';return;}
-
-  box.innerHTML=`
-    <table>
-      <thead><tr><th>Username</th><th>UID</th><th>Role</th><th>Playstyle</th><th>Action</th></tr></thead>
-      <tbody>${data.map(m=>`
-        <tr>
-          <td>${escapeHTML(m.username)}</td>
-          <td>${escapeHTML(m.uid)}</td>
-          <td>${escapeHTML(m.role)}</td>
-          <td>${escapeHTML(m.playstyle)}</td>
-          <td>
-            <button class="btn secondary" onclick='editMember(${JSON.stringify(m)})'>EDIT</button>
-            <button class="btn danger" onclick="deleteMember(${m.id})">DELETE</button>
-          </td>
-        </tr>
-      `).join("")}</tbody>
-    </table>`;
-}
-
-document.getElementById("memberForm").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const id=document.getElementById("editId").value;
-  const payload={
-    username:document.getElementById("mUsername").value.trim(),
-    uid:document.getElementById("mUid").value.trim(),
-    role:document.getElementById("mRole").value,
-    playstyle:document.getElementById("mPlaystyle").value
-  };
-
-  let result;
-  if(id){
-    result=await supabaseClient.from("members").update(payload).eq("id",id);
-  }else{
-    result=await supabaseClient.from("members").insert(payload);
+async function startApp(){
+  const {data:{session}} = await supabaseClient.auth.getSession();
+  if(!session) return;
+  const {data:admin, error} = await supabaseClient
+    .from("admin_users").select("user_id").eq("user_id",session.user.id).maybeSingle();
+  if(error || !admin){
+    await supabaseClient.auth.signOut();
+    $("loginMsg").textContent = "This account is not a ZERO FEAR admin.";
+    $("loginView").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    return;
   }
-
-  if(result.error){setStatus("memberStatus",result.error.message);return;}
-  setStatus("memberStatus","Member saved successfully.",true);
-  clearMemberForm();
-  loadMembers();
-});
-
-function editMember(m){
-  document.getElementById("editId").value=m.id;
-  document.getElementById("mUsername").value=m.username;
-  document.getElementById("mUid").value=m.uid;
-  document.getElementById("mRole").value=m.role;
-  document.getElementById("mPlaystyle").value=m.playstyle;
-  window.scrollTo({top:0,behavior:"smooth"});
+  $("loginView").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("adminEmail").textContent = session.user.email || "";
+  await loadAll();
+  subscribeRealtime();
 }
 
-document.getElementById("cancelEdit").addEventListener("click",clearMemberForm);
-
-function clearMemberForm(){
-  document.getElementById("memberForm").reset();
-  document.getElementById("editId").value="";
-  document.getElementById("memberStatus").textContent="";
+async function loadAll(){
+  await Promise.all([loadMembers(),loadApplications(),loadMatches()]);
 }
 
-async function deleteMember(id){
-  if(!confirm("Remove this member from the public website?")) return;
-  const {error}=await supabaseClient.from("members").delete().eq("id",id);
+async function loadMembers(){
+  const {data,error} = await supabaseClient.from("members").select("*").order("created_at",{ascending:false});
+  if(error){$("membersWrap").innerHTML=`<div class="error">${escapeHtml(error.message)}</div>`;return;}
+  members=data||[];
+  $("memberCount").textContent=members.length;
+  renderMembers();
+}
+
+async function loadApplications(){
+  const {data,error} = await supabaseClient.from("applications").select("*").order("created_at",{ascending:false});
+  if(error){$("applicationsWrap").innerHTML=`<div class="error">${escapeHtml(error.message)}</div>`;return;}
+  applications=data||[];
+  $("appCount").textContent=applications.filter(x=>x.status==="Pending").length;
+  renderApplications();
+}
+
+async function loadMatches(){
+  const {data,error} = await supabaseClient.from("matches").select("*").order("war_date",{ascending:false}).order("match_number",{ascending:false});
+  if(error){$("matchesWrap").innerHTML=`<div class="error">${escapeHtml(error.message)}</div>`;return;}
+  matches=data||[];
+  $("matchCount").textContent=matches.length;
+
+  const {data:stats} = await supabaseClient.from("member_stats").select("kills").order("kills",{ascending:false}).limit(1);
+  $("topKills").textContent=stats?.[0]?.kills || 0;
+  renderMatches();
+}
+
+function renderMembers(){
+  if(!members.length){$("membersWrap").innerHTML='<div class="empty">No members.</div>';return;}
+  $("membersWrap").innerHTML=`<div style="overflow:auto"><table><thead><tr><th>Username</th><th>UID</th><th>Role</th><th>Playstyle</th></tr></thead><tbody>
+  ${members.map(m=>`<tr><td><b>${escapeHtml(m.username)}</b></td><td>${escapeHtml(m.uid)}</td><td><span class="badge">${escapeHtml(m.role||"Member")}</span></td><td>${escapeHtml(m.playstyle||"Flex")}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+function renderApplications(){
+  if(!applications.length){$("applicationsWrap").innerHTML='<div class="empty">No applications.</div>';return;}
+  $("applicationsWrap").innerHTML=`<div style="overflow:auto"><table><thead><tr><th>Username</th><th>UID</th><th>Playstyle</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  ${applications.map(a=>`<tr>
+    <td><b>${escapeHtml(a.username)}</b></td>
+    <td>${escapeHtml(a.uid)}</td>
+    <td>${escapeHtml(a.playstyle||"Flex")}</td>
+    <td><span class="badge">${escapeHtml(a.status||"Pending")}</span></td>
+    <td><div class="actions">
+      ${a.status==="Pending"?`<button class="btn small ok" onclick="acceptApplication(${a.id})">ACCEPT</button><button class="btn small danger" onclick="rejectApplication(${a.id})">REJECT</button>`:""}
+      <button class="btn small danger" onclick="deleteApplication(${a.id})">DELETE</button>
+    </div></td>
+  </tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+function renderMatches(){
+  if(!matches.length){$("matchesWrap").innerHTML='<div class="empty">No matches recorded yet.</div>';return;}
+  $("matchesWrap").innerHTML=`<div style="overflow:auto"><table><thead><tr><th>Date</th><th>Match</th><th>Mode</th><th>Winner</th><th>Status</th></tr></thead><tbody>
+  ${matches.map(m=>`<tr><td>${escapeHtml(m.war_date)}</td><td>#${m.match_number}</td><td>${escapeHtml(m.mode)}</td><td>${m.winning_team?`Team ${m.winning_team}`:"—"}</td><td><span class="badge">${escapeHtml(m.status)}</span></td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+
+async function acceptApplication(id){
+  const app=applications.find(x=>x.id===id); if(!app)return;
+  const {error:memberError}=await supabaseClient.from("members").upsert({
+    username:app.username,uid:app.uid,role:"Member",playstyle:app.playstyle||"Flex"
+  },{onConflict:"uid"});
+  if(memberError){alert(memberError.message);return;}
+  const {error}=await supabaseClient.from("applications").update({status:"Accepted"}).eq("id",id);
   if(error){alert(error.message);return;}
-  loadMembers();
+  await loadAll();
+}
+async function rejectApplication(id){
+  const {error}=await supabaseClient.from("applications").update({status:"Rejected"}).eq("id",id);
+  if(error)alert(error.message);else await loadApplications();
+}
+async function deleteApplication(id){
+  if(!confirm("Delete this application?"))return;
+  const {error}=await supabaseClient.from("applications").delete().eq("id",id);
+  if(error)alert(error.message);else await loadApplications();
 }
 
-supabaseClient
-  .channel("admin-realtime")
-  .on("postgres_changes",{event:"*",schema:"public",table:"applications"},()=>loadApplications())
-  .on("postgres_changes",{event:"*",schema:"public",table:"members"},()=>loadMembers())
-  .subscribe();
+function openMatchModal(){
+  $("matchModal").classList.remove("hidden");
+  $("matchMsg").classList.add("hidden");
+  $("matchMsg").textContent="";
+  $("warDate").value=new Date().toISOString().slice(0,10);
+  $("matchNumber").value=nextMatchNumber($("warDate").value);
+  teams=0;
+  $("teams").innerHTML="";
+  addTeam();
+  addTeam();
+  updateWinningTeam();
+}
+function closeMatchModal(){$("matchModal").classList.add("hidden");}
+function nextMatchNumber(date){
+  const same=matches.filter(m=>m.war_date===date);
+  return same.length ? Math.max(...same.map(m=>Number(m.match_number)||0))+1 : 1;
+}
+function addTeam(){
+  teams++;
+  const teamNo=teams;
+  const wrap=document.createElement("div");
+  wrap.className="team";
+  wrap.dataset.team=teamNo;
+  wrap.innerHTML=`<div class="team-head"><h3>⚔️ TEAM ${teamNo}</h3><button class="btn small danger" onclick="removeTeam(${teamNo})">REMOVE TEAM</button></div><div class="players"></div><button class="btn small" onclick="addPlayer(${teamNo})">＋ ADD PLAYER</button>`;
+  $("teams").appendChild(wrap);
+  addPlayer(teamNo);
+  updateWinningTeam();
+}
+function removeTeam(teamNo){
+  if(document.querySelectorAll(".team").length<=1){alert("At least one team is required.");return;}
+  document.querySelector(`.team[data-team="${teamNo}"]`)?.remove();
+  renumberTeams();
+}
+function renumberTeams(){
+  [...document.querySelectorAll(".team")].forEach((el,i)=>{
+    const n=i+1; el.dataset.team=n; el.querySelector("h3").textContent=`⚔️ TEAM ${n}`;
+    const btn=el.querySelector(".team-head button"); btn.setAttribute("onclick",`removeTeam(${n})`);
+    el.querySelectorAll(".player-row").forEach(row=>row.dataset.team=n);
+    el.querySelectorAll(".add-player-dummy");
+  });
+  teams=document.querySelectorAll(".team").length;
+  updateWinningTeam();
+}
+function addPlayer(teamNo){
+  const team=document.querySelector(`.team[data-team="${teamNo}"]`);
+  if(!team)return;
+  const row=document.createElement("div");
+  row.className="player-row";
+  row.dataset.team=teamNo;
+  row.innerHTML=`
+    <div class="wide"><label>Player</label><select class="player-select" onchange="validatePlayers()"><option value="">Select member</option>${members.map(m=>`<option value="${m.id}">${escapeHtml(m.username)} — ${escapeHtml(m.uid)}</option>`).join("")}</select></div>
+    <div><label>Kills</label><input class="kills" type="number" min="0" value="0"></div>
+    <div><label>Deaths</label><input class="deaths" type="number" min="0" value="0"></div>
+    <div><label>Damage</label><input class="damage" type="number" min="0" value="0"></div>
+    <div><label>Placement</label><input class="placement" type="number" min="1" placeholder="—"></div>
+    <div><label>MVP</label><button type="button" class="mvp-toggle" onclick="toggleMvp(this)">⭐</button></div>
+    <button type="button" class="btn danger remove" onclick="this.closest('.player-row').remove()">✕</button>`;
+  team.querySelector(".players").appendChild(row);
+}
+function toggleMvp(btn){
+  const active=btn.classList.contains("active");
+  document.querySelectorAll(".mvp-toggle.active").forEach(x=>x.classList.remove("active"));
+  if(!active)btn.classList.add("active");
+}
+function updateWinningTeam(){
+  $("winningTeam").innerHTML=`<option value="">No winner / draw</option>${[...document.querySelectorAll(".team")].map(t=>`<option value="${t.dataset.team}">Team ${t.dataset.team}</option>`).join("")}`;
+}
+function validatePlayers(){
+  const seen=new Set();
+  document.querySelectorAll(".player-select").forEach(s=>{
+    if(!s.value)return;
+    s.style.borderColor=seen.has(s.value)?"#ff4d6d":"";
+    seen.add(s.value);
+  });
+}
+async function saveMatch(){
+  const msg=$("matchMsg"); msg.className="notice"; msg.classList.remove("hidden"); msg.textContent="Saving...";
+  const warDate=$("warDate").value;
+  const matchNumber=Number($("matchNumber").value);
+  if(!warDate||!matchNumber||matchNumber<1){msg.classList.add("error");msg.textContent="Enter a valid date and match number.";return;}
 
-showDashboardIfAdmin();
+  const players=[];
+  let hasError=false;
+  document.querySelectorAll(".team").forEach(team=>{
+    const teamNo=Number(team.dataset.team);
+    team.querySelectorAll(".player-row").forEach(row=>{
+      const memberId=row.querySelector(".player-select").value;
+      if(!memberId){hasError=true;return;}
+      players.push({
+        member_id:Number(memberId),
+        team_number:teamNo,
+        kills:Math.max(0,Number(row.querySelector(".kills").value||0)),
+        deaths:Math.max(0,Number(row.querySelector(".deaths").value||0)),
+        damage:Math.max(0,Number(row.querySelector(".damage").value||0)),
+        placement:row.querySelector(".placement").value?Number(row.querySelector(".placement").value):null,
+        is_mvp:row.querySelector(".mvp-toggle").classList.contains("active")
+      });
+    });
+  });
+  if(hasError||!players.length){msg.classList.add("error");msg.textContent="Every player row must have a member selected.";return;}
+  if(new Set(players.map(p=>p.member_id)).size!==players.length){msg.classList.add("error");msg.textContent="A player cannot be added twice in the same match.";return;}
+  if(players.filter(p=>p.is_mvp).length>1){msg.classList.add("error");msg.textContent="Only one MVP is allowed.";return;}
+
+  const payload={
+    war_date:warDate,
+    match_number:matchNumber,
+    mode:$("matchMode").value,
+    winning_team:$("winningTeam").value||null,
+    notes:$("matchNotes").value.trim()||null
+  };
+  const {data,error}=await supabaseClient.rpc("save_zero_fear_match",{p_match:payload,p_players:players});
+  if(error){msg.classList.add("error");msg.textContent=error.message;return;}
+  msg.className="notice success"; msg.textContent="Match saved successfully!";
+  await loadMatches();
+  setTimeout(closeMatchModal,700);
+}
+function subscribeRealtime(){
+  supabaseClient.channel("zf-admin-live")
+    .on("postgres_changes",{event:"*",schema:"public",table:"members"},()=>loadMembers())
+    .on("postgres_changes",{event:"*",schema:"public",table:"applications"},()=>loadApplications())
+    .on("postgres_changes",{event:"*",schema:"public",table:"matches"},()=>loadMatches())
+    .subscribe();
+}
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+
+supabaseClient.auth.getSession().then(({data:{session}})=>{
+  if(session) startApp();
+});
+supabaseClient.auth.onAuthStateChange((_event,session)=>{
+  if(session) startApp();
+});
 </script>
 </body>
 </html>
